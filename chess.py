@@ -205,28 +205,14 @@ def attemptMove(a, b):
             return True
     elif (getTileData(board, a)[0] == 2):
         #Tower logic
-        #Vertical
-        if (a[0] == b[0] and a[1] != b[1] and getTileData(board, b)[1] != side):
-            for d in range(1, 9):
-                if (a[1]+d == b[1]):
-                    return True
-                elif (a[1]-d == b[1]):
-                    return True
-                if (a[1] > b[1] and getTileData(board, (a[0], a[1]-d))[1] != 0):
-                    return False
-                elif (a[1] < b[1] and getTileData(board, (a[0], a[1]+d))[1] != 0):
-                    return False
-        #Horizontal
-        if (a[1] == b[1] and a[0] != b[0] and getTileData(board, b)[1] != side):
-            for d in range(1, 9):
-                if (a[0]+d == b[0]):
-                    return True
-                elif (a[0]-d == b[0]):
-                    return True
-                if (a[0] > b[0] and getTileData(board, (a[0]-d, a[1]))[1] != 0):
-                    return False
-                elif (a[0] < b[0] and getTileData(board, (a[0]+d, a[1]))[1] != 0):
-                    return False
+        if attemptMoveIncrement(board, a, b, 1, 0, side, 10):
+            return True
+        elif attemptMoveIncrement(board, a, b, -1, 0, side, 10):
+            return True
+        elif attemptMoveIncrement(board, a, b, 0, 1, side, 10):
+            return True
+        elif attemptMoveIncrement(board, a, b, 0, -1, side, 10):
+            return True
         return False
     elif (getTileData(board, a)[0] == 3):
         #Horse logic
@@ -245,87 +231,75 @@ def attemptMove(a, b):
         xincrement = math.copysign(1, xdif)
         yincrement = math.copysign(1, ydif)
 
-        if (abs(xdif) == abs(ydif) and getTileData(board, b)[1] != side):
-            for d in range(1, 9):
-                if (a[0]+round(xincrement*d) == b[0] and a[1]+round(yincrement*d) == b[1]):
-                    return True
-                if getTileData(board, ( a[0]+round(d*xincrement), a[1]+round(d*yincrement) )  )[1] != 0:
-                    return False
+        # Use math to make sure that our move is diagonal before attempting it
+        if (abs(xdif) == abs(ydif)):
+            if attemptMoveIncrement(board, a, b, 1, 1, side, 10):
+                return True
+            elif attemptMoveIncrement(board, a, b, -1, 1, side, 10):
+                return True
+            elif attemptMoveIncrement(board, a, b, -1, -1, side, 10):
+                return True
+            elif attemptMoveIncrement(board, a, b, 1, -1, side, 10):
+                return True
             return False
+        return False
     elif (getTileData(board, a)[0] == 5):
         #Queen logic
-        #Find the difference between point a and b
-        xdif = b[0]-a[0]
-        ydif = b[1]-a[1]
-        xincrement = math.copysign(1, xdif)
-        yincrement = math.copysign(1, ydif)
-
-        if (abs(xdif) == abs(ydif) and getTileData(board, b)[1] != side):
-            for d in range(1, 9):
-                if (a[0]+round(xincrement*d) == b[0] and a[1]+round(yincrement*d) == b[1]):
-                    return True
-                if getTileData(board, ( a[0]+round(d*xincrement), a[1]+round(d*yincrement) )  )[1] != 0:
-                    return False
-        #Vertical
-        if (a[0] == b[0] and a[1] != b[1] and getTileData(board, b)[1] != side):
-            for d in range(1, 9):
-                if (a[1]+d == b[1]):
-                    return True
-                elif (a[1]-d == b[1]):
-                    return True
-                if (a[1] > b[1] and getTileData(board, (a[0], a[1]-d))[1] != 0):
-                    return False
-                elif (a[1] < b[1] and getTileData(board, (a[0], a[1]+d))[1] != 0):
-                    return False
-        #Horizontal
-        if (a[1] == b[1] and a[0] != b[0] and getTileData(board, b)[1] != side):
-            for d in range(1, 9):
-                if (a[0]+d == b[0]):
-                    return True
-                elif (a[0]-d == b[0]):
-                    return True
-                if (a[0] > b[0] and getTileData(board, (a[0]-d, a[1]))[1] != 0):
-                    return False
-                elif (a[0] < b[0] and getTileData(board, (a[0]+d, a[1]))[1] != 0):
-                    return False
+        if attemptMoveIncrement(board, a, b, 1, 1, side, 10):
+            return True
+        elif attemptMoveIncrement(board, a, b, -1, 1, side, 10):
+            return True
+        elif attemptMoveIncrement(board, a, b, -1, -1, side, 10):
+            return True
+        elif attemptMoveIncrement(board, a, b, 1, -1, side, 10):
+            return True
+        elif attemptMoveIncrement(board, a, b, 1, 0, side, 10):
+            return True
+        elif attemptMoveIncrement(board, a, b, -1, 0, side, 10):
+            return True
+        elif attemptMoveIncrement(board, a, b, 0, 1, side, 10):
+            return True
+        elif attemptMoveIncrement(board, a, b, 0, -1, side, 10):
+            return True
         return False
     else:
         #King logic
-        #Find the difference between point a and b
-        xdif = b[0]-a[0]
-        ydif = b[1]-a[1]
-        xincrement = math.copysign(1, xdif)
-        yincrement = math.copysign(1, ydif)
-        d = 1
-
-        if (abs(xdif) == abs(ydif) and getTileData(board, b)[1] != side):
-            if (a[0]+round(xincrement*d) == b[0] and a[1]+round(yincrement*d) == b[1]):
-                return True
-            if getTileData(board, ( a[0]+round(d*xincrement), a[1]+round(d*yincrement) )  )[1] != 0:
-                return False
-        #Vertical
-        if (a[0] == b[0] and a[1] != b[1] and getTileData(board, b)[1] != side):
-            if (a[1]+d == b[1]):
-                return True
-            elif (a[1]-d == b[1]):
-                return True
-            if (a[1] > b[1] and getTileData(board, (a[0], a[1]-d))[1] != 0):
-                return False
-            elif (a[1] < b[1] and getTileData(board, (a[0], a[1]+d))[1] != 0):
-                return False
-        #Horizontal
-        if (a[1] == b[1] and a[0] != b[0] and getTileData(board, b)[1] != side):
-            if (a[0]+d == b[0]):
-                return True
-            elif (a[0]-d == b[0]):
-                return True
-            if (a[0] > b[0] and getTileData(board, (a[0]-d, a[1]))[1] != 0):
-                return False
-            elif (a[0] < b[0] and getTileData(board, (a[0]+d, a[1]))[1] != 0):
-                return False
+        if attemptMoveIncrement(board, a, b, 1, 1, side, 1):
+            return True
+        elif attemptMoveIncrement(board, a, b, -1, 1, side, 1):
+            return True
+        elif attemptMoveIncrement(board, a, b, -1, -1, side, 1):
+            return True
+        elif attemptMoveIncrement(board, a, b, 1, -1, side, 1):
+            return True
+        elif attemptMoveIncrement(board, a, b, 1, 0, side, 1):
+            return True
+        elif attemptMoveIncrement(board, a, b, -1, 0, side, 1):
+            return True
+        elif attemptMoveIncrement(board, a, b, 0, 1, side, 1):
+            return True
+        elif attemptMoveIncrement(board, a, b, 0, -1, side, 1):
+            return True
         return False
-    
     return False
+
+# recursive method that checks if the path between a and b is clear
+def attemptMoveIncrement(board, a, b, perX, perY, side, distance):
+    if distance == 0:
+        return False
+    if ( a[0]+perX == b[0] and a[1]+perY == b[1]):
+        return True
+    if getTileData(board, b)[1] != side:
+        if getTileData(board, (int(a[0]+perX), int(a[1]+perY)) )[1] == 0:
+            # Only increment if the perX or perY isn't 0
+            perXIncrement = 0
+            perYIncrement = 0
+            if perX != 0:
+                perXIncrement = math.copysign(1, perX)
+            if perY != 0:
+                perYIncrement = math.copysign(1, perY)
+            return attemptMoveIncrement(board, a, b, perX + perXIncrement, perY + perYIncrement, side, distance-1)
+        return False
 
 #Checks if a player has entered a checkmate
 def checkCheckmate(turn):
